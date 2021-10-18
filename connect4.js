@@ -6,10 +6,12 @@
  */
 
 class Game {
-  constructor(height, width) {
+  constructor(height, width, player1, player2) {
     this.height = height;
     this.width = width;
-    this.currPlayer = 1;
+    this.player1 = player1;
+    this.player2 = player2;
+    this.currPlayer = player1;
     this.makeBoard();
     this.makeHtmlBoard();
     this.gameOver = false;
@@ -71,7 +73,8 @@ class Game {
   placeInTable(y, x) {
     const piece = document.createElement('div');
     piece.classList.add('piece');
-    piece.classList.add(`p${this.currPlayer}`);
+    // piece.classList.add(`p${this.currPlayer}`);
+    piece.style.backgroundColor = this.currPlayer.color;
     piece.style.top = -50 * (y + 2);
 
     const spot = document.getElementById(`${y}-${x}`);
@@ -81,7 +84,9 @@ class Game {
   /** endGame: announce game end */
 
   endGame(msg) {
-    alert(msg);
+    setTimeout(() => {
+      alert(msg);
+    }, 250);
   }
 
   /** handleClick: handle click of column top to play piece */
@@ -105,7 +110,7 @@ class Game {
       // check for win
       if (this.checkForWin()) {
         this.gameOver = true;
-        return this.endGame(`Player ${this.currPlayer} won!`);
+        return this.endGame(`Player ${this.currPlayer.color} won!`);
       }
       
       // check for tie
@@ -114,7 +119,7 @@ class Game {
       }
         
       // switch players
-      this.currPlayer = this.currPlayer === 1 ? 2 : 1;
+      this.currPlayer = this.currPlayer === this.player1 ? this.player2 : this.player1;
       }
     
   }
@@ -153,7 +158,14 @@ class Game {
   }
 }
 
+class Player {
+  constructor(color) {
+    this.color = color;
+  }
+}
 
 document.querySelector('#start').addEventListener('click', () => {
-  new Game(6, 7);   // assuming constructor takes height, width
+  let player1 = new Player(document.querySelector('#player-1').value);
+  let player2 = new Player(document.querySelector('#player-2').value);
+  new Game(6, 7, player1, player2);   // assuming constructor takes height, width
 })
